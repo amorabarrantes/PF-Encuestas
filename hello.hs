@@ -10,23 +10,61 @@ input ::  IO String
 input  = do
     getLine
 
-
-append :: String -> [String] -> [String]
-append new_element xs = xs ++ [new_element]
-
-agregarSublista :: [String] -> [[String]] -> [[String]]
-agregarSublista new_element xs = xs ++ [new_element]
-
-
 --Funcion para agregar preguntas.
-agregarPreguntas :: [[String]] ->IO [[String]]
-agregarPreguntas listaParametro = do
+--[["Encuesta1"],["Encuesta2"], ["etc"]]
+agregarEncuestas :: [[String]] ->IO [[String]]
+agregarEncuestas listaVacia = do
     pregunta <- input
-    let lista2 = listaParametro ++ [[pregunta]]
+    let lista2 = listaVacia ++ [[pregunta]]
 
     pregunta2 <- input
     let lista3 = lista2 ++ [[pregunta2]]
     return(lista3)
+
+
+--Funcion para agregar preguntas
+--[["Pregunta1", "Pregunta2"]]
+agregarPreguntas :: [[String]] ->IO [[String]]
+agregarPreguntas listaVacia = do
+
+    retornoPreguntas <- agregarPreguntasAux listaVacia
+    return(retornoPreguntas)
+
+--Auxiliar de agregacion de preguntas.   
+agregarPreguntasAux :: [[String]] ->IO [[String]]
+agregarPreguntasAux listaVacia = do
+    
+    pregunta1 <- input
+    pregunta2 <- input
+
+
+    let subLista = [pregunta1] ++ [pregunta2]
+
+    let lista = listaVacia ++ [subLista]
+
+    return(lista)
+
+
+
+
+
+
+
+
+
+--Funcion para agregar respuestas
+--[ [ ["Respuesta1","Respuesta2"], ["Respuesta1","Respuesta2"] ] ]
+agregarRespuestas :: [[String]] ->IO [[String]]
+agregarRespuestas listaVacia = do
+    pregunta <- input
+    let lista2 = listaVacia ++ [[pregunta]]
+
+    pregunta2 <- input
+    let lista3 = lista2 ++ [[pregunta2]]
+    return(lista3)
+
+
+
 
 
 --loop :: Int -> IO()
@@ -39,11 +77,6 @@ agregarPreguntas listaParametro = do
 --            loop variableCondicion
 --        else putStrLn ""
 
-
-
-
-
-
 main :: IO()
 main = do
     --(mapM_) print listaEncuestas
@@ -52,10 +85,19 @@ main = do
     --print(listaPreguntas !! 0)
     --print(listaRespuestas !! 0)
 
-    print("empezamos")
-    a <- agregarPreguntas []
+    a <- agregarEncuestas []
+    b <- agregarPreguntas []
+    --c <- agregarRespuestas []
+
+    putStrLn $ ""
+
+    print("Lista de encuestas")
     print(a)
-    print("hola")
+
+    putStrLn $ ""
+
+    print("Lista de preguntas")
+    print(b)
 
     
     
