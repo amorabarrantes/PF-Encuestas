@@ -59,25 +59,25 @@ agregarRespuestas listaVacia = do
 
 
 
-responderEncuestas :: [[String]]->[[String]] ->IO [[String]]
-responderEncuestas listaPR listaRetorno  = do
+responderEncuestas :: [[String]]->[[String]] -> Int ->IO [[String]]
+responderEncuestas listaPR listaRetorno contador = do
     
     if (listaPR /= [])
         then do
             if (length(head listaPR) /= 1)
                 then do
-                    print("Digite el indice a responder para la pregunta")
+                    print("Digite el indice a responder para la pregunta "++ (show contador))
                     print(head listaPR)
                     indice <- input
                     let indiceInt = read indice :: Int  
 
                     let listaResultados = head listaPR !! indiceInt
                     let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
-                    responderEncuestas (tail listaPR) listaRetornoAux
+                    responderEncuestas (tail listaPR) listaRetornoAux (contador+1)
                 else do
                     let listaResultados = head listaPR !! 0
                     let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
-                    responderEncuestas (tail listaPR) listaRetornoAux
+                    responderEncuestas (tail listaPR) listaRetornoAux (contador)
             
        else return(listaRetorno)
 
@@ -92,7 +92,7 @@ listaPreguntas = [ [ ["pregunta1"],["respuesta1x", "respuestaN"], ["pregunta2"],
 
 main :: IO()
 main = do
-    respuestas <- responderEncuestas (listaPreguntas!!0) []
+    respuestas <- responderEncuestas (listaPreguntas!!0) [] 1
     print(respuestas)
     --print(listaPreguntas!!0)
     --print(indicesOf "respuesta1x" ((listaPreguntas!!0)!!1))
