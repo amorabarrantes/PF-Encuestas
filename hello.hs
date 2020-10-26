@@ -8,8 +8,8 @@ input  = do
 generarEncuestas :: [[String]] -> [[[String]]] -> IO()
 generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
     
-    a <- agregarEncuestas listaEncuestas
-    b <- agregarPreguntas listaPreguntasyRespuestas
+    listaFinalEncuestas <- agregarEncuestas listaEncuestas
+    listaFinalPreguntas <- agregarPreguntas listaPreguntasyRespuestas
 
     print("Quiere agregar otra Encuesta? (1 si, 0 no)")
     variableCondicionAux <- input
@@ -17,20 +17,40 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
 
     if (variableCondicion /= 0)
         then do
-            putStrLn $ ""
-            print("Lista de encuestas")
-            print(a)
-
-            putStrLn $ ""
-            print("Lista de preguntas y respuestas")
-            print(b)
-
-            generarEncuestas a b
-
+            generarEncuestas listaFinalEncuestas listaFinalPreguntas
         else print("Programa finalizado")
+
+    putStrLn $ ""
+    print("Lista de encuestas")
+    print(listaFinalEncuestas)
+
+    putStrLn $ ""
+    print("Lista de preguntas y respuestas")
+    print(listaFinalPreguntas)
     
-    c <- (responderEncuestas (b !! 0) [] 1)
+    putStrLn $ ""
+    print(listaFinalEncuestas)
+    print("¿Digite el indice de la encuesta a responder?")
+    indiceEncuesta <- input
+    let indiceEncuestaInt = read indiceEncuesta :: Int
+
+    c <- generarResponder (listaFinalPreguntas !! indiceEncuestaInt) []
+    putStrLn $ ""
+    print("Lista con las respuestas")
     print(c)
+
+generarResponder:: [[String]] -> [[[String]]] -> IO [[[String]]]
+generarResponder listaPreguntasGR listaRetornoGR = do
+    print("Quiere dar otra respuesta a la encuesta? (1 si, 0 no)")
+    variableCondicionAux <- input
+    let variableCondicion = read variableCondicionAux :: Int
+
+    if (variableCondicion /= 0)
+        then do
+            respuestasGR <- responderEncuestas listaPreguntasGR listaRetornoGR 1
+            generarResponder listaPreguntasGR respuestasGR
+
+        else return (listaRetornoGR)
 
 
 --Funcion para agregar preguntas.
@@ -91,9 +111,16 @@ agregarRespuestas listaVacia = do
     else return([listaVacia])
 
 --Responde a encuestas, mandar Lista De Preguntas y respuestas de la encuesta -> Lista de retorno, vacia por defecto -> Contador 0 por defecto
-responderEncuestas :: [[String]]->[[String]] -> Int ->IO [[String]]
+responderEncuestas :: [[String]]->[[[String]]] -> Int ->IO [[[String]]]
 responderEncuestas listaPR listaRetorno contador = do
+    listaAContatenar <- responderEncuestasAux listaPR [] contador
+    let listaNueva = listaRetorno ++ [listaAContatenar] 
     
+    return (listaNueva)
+    
+
+responderEncuestasAux :: [[String]]->[[String]] -> Int ->IO [[String]]
+responderEncuestasAux listaPR listaRetorno contador = do
     if (listaPR /= [])
         then do
             if (length(head listaPR) /= 1)
@@ -105,15 +132,14 @@ responderEncuestas listaPR listaRetorno contador = do
 
                     let listaResultados = head listaPR !! indiceInt
                     let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
-                    responderEncuestas (tail listaPR) listaRetornoAux (contador+1)
+                    responderEncuestasAux (tail listaPR) listaRetornoAux (contador+1)
                 else do
                     print("Pregunta")
                     print(head listaPR)
                     let listaResultados = head listaPR !! 0
                     let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
-                    responderEncuestas (tail listaPR) listaRetornoAux (contador)
-            
-       else return(listaRetorno)
+                    responderEncuestasAux (tail listaPR) listaRetornoAux (contador)
+    else return(listaRetorno)
 
 
 main :: IO()
