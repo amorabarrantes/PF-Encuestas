@@ -107,6 +107,8 @@ responderEncuestas listaPR listaRetorno contador = do
                     let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
                     responderEncuestas (tail listaPR) listaRetornoAux (contador+1)
                 else do
+                    print("Pregunta")
+                    print(head listaPR)
                     let listaResultados = head listaPR !! 0
                     let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
                     responderEncuestas (tail listaPR) listaRetornoAux (contador)
@@ -117,8 +119,3 @@ responderEncuestas listaPR listaRetorno contador = do
 main :: IO()
 main = do
     generarEncuestas [] []
-
-
-
-    
-    
