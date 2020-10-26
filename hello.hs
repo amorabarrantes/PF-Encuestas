@@ -3,6 +3,34 @@ input ::  IO String
 input  = do
     getLine
 
+generarEncuestas :: [[String]] -> [[String]] -> IO()
+generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
+
+    print("Quiere agregar otra Encuesta? (1 si, 0 no)")
+    variableCondicionAux <- input
+    let variableCondicion = read variableCondicionAux :: Int  
+
+    if (variableCondicion /= 0)
+        then do
+            a <- agregarEncuestas listaEncuestas
+            b <- agregarPreguntas listaPreguntasyRespuestas
+            putStrLn $ ""
+            print("Lista de encuestas")
+            print(a)
+
+            putStrLn $ ""
+            print("Lista de preguntas y respuestas")
+            print(b)
+
+            generarEncuestas a (b!!1)
+
+        else print("Programa finalizado")
+
+
+
+
+
+
 --Funcion para agregar preguntas.
 --[["Encuesta1"],["Encuesta2"], ["etc"]]
 agregarEncuestas :: [[String]] ->IO [[String]]
@@ -82,9 +110,11 @@ responderEncuestas listaPR listaRetorno contador = do
        else return(listaRetorno)
 
 
-
+{-
 indicesOf :: Eq a => a -> [a] -> [Int]
 indicesOf a as = [i | (b, i) <- zip as [0..], b == a]
+-}
+
 
 
 listaprueba = ["hola", "adios", "xd"]
@@ -92,28 +122,27 @@ listaPreguntas = [ [ ["pregunta1"],["respuesta1x", "respuestaN"], ["pregunta2"],
 
 main :: IO()
 main = do
-    respuestas <- responderEncuestas (listaPreguntas!!0) [] 1
-    print(respuestas)
+    --respuestas <- responderEncuestas (listaPreguntas!!0) [] 1
+    --print(respuestas)
     --print(listaPreguntas!!0)
     --print(indicesOf "respuesta1x" ((listaPreguntas!!0)!!1))
 
-    --a <- agregarEncuestas []
-    --b <- agregarPreguntas []
-    --c <- agregarRespuestas []
+    --generarEncuestas [] []
 
-    --putStrLn $ ""
-    --print("Lista de encuestas")
-    --print(a)
+    a <- agregarEncuestas []
+    b <- agregarPreguntas []
 
-    --putStrLn $ ""
-    --print("Lista de preguntas")
-    --print(b)
+    c <- agregarEncuestas a
+    d <- agregarPreguntas b
 
-    --putStrLn $ ""
-    --print("Lista de respuestas")
-    --print(c)
+    
+    putStrLn $ ""
+    print("Lista de encuestas")
+    print(a)
 
-
+    putStrLn $ ""
+    print("Lista de preguntas y respuestas")
+    print(b)
 
 
 
