@@ -23,10 +23,12 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
     putStrLn $ ""
     print("Lista de encuestas")
     print(listaFinalEncuestas)
+    mapM_ (appendFile "encuestas.txt" . show) listaFinalEncuestas
 
     putStrLn $ ""
     print("Lista de preguntas y respuestas")
     print(listaFinalPreguntas)
+    mapM_ (appendFile "preguntas.txt" . show) listaFinalPreguntas
     
     putStrLn $ ""
     print(listaFinalEncuestas)
@@ -34,10 +36,50 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
     indiceEncuesta <- input
     let indiceEncuestaInt = read indiceEncuesta :: Int
 
-    c <- generarResponder (listaFinalPreguntas !! indiceEncuestaInt) []
+    listaConRespuestas <- generarResponder (listaFinalPreguntas !! indiceEncuestaInt) []
     putStrLn $ ""
     print("Lista con las respuestas")
-    print(c)
+    print(listaConRespuestas)
+
+    putStrLn $ ""
+    print("Estadisticas")
+
+    putStrLn $ ""
+    stat0 <- generarStat0 listaFinalEncuestas
+    print("Cuantas encuestas se introdujeron al sistema")
+    print(stat0)
+
+    putStrLn $ ""
+    stat1 <- generarStat1 listaConRespuestas
+    print("Cuantas respuestas tuvo la encuesta")
+    print(stat1)
+    
+    putStrLn $ ""
+    stat2 <- generarStat2 listaConRespuestas
+    print("Cuantas preguntas tiene la encuesta contestada")
+    print(stat2)
+
+--Cuantas encuestas se introdujeron al sistema
+generarStat0:: [[String]] -> IO Int
+generarStat0 respuestas0 = do
+    let a = length(respuestas0)
+    return(a)
+
+
+--Cuantas veces se respondio la encuesta
+generarStat1:: [[[String]]] -> IO Int
+generarStat1 respuestas1 = do
+    let a = length(respuestas1)
+    return(a)
+
+--Cuantas preguntas tiene una encuesta
+generarStat2:: [[[String]]] -> IO Int
+generarStat2 respuestas2 = do
+    let a = length(respuestas2 !!0)
+    let b = div a 2
+    return(b)
+
+
 
 generarResponder:: [[String]] -> [[[String]]] -> IO [[[String]]]
 generarResponder listaPreguntasGR listaRetornoGR = do
