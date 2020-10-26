@@ -24,11 +24,13 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
     print("Lista de encuestas")
     print(listaFinalEncuestas)
     mapM_ (appendFile "encuestas.txt" . show) listaFinalEncuestas
+    (appendFile "encuestas.txt" "\n")
 
     putStrLn $ ""
     print("Lista de preguntas y respuestas")
     print(listaFinalPreguntas)
     mapM_ (appendFile "preguntas.txt" . show) listaFinalPreguntas
+    (appendFile "preguntas.txt" "\n")
     
     putStrLn $ ""
     print(listaFinalEncuestas)
