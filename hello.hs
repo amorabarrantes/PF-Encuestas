@@ -3,7 +3,8 @@ input ::  IO String
 input  = do
     getLine
 
-generarEncuestas :: [[String]] -> [[String]] -> IO()
+
+generarEncuestas :: [[String]] -> [[[String]]] -> IO()
 generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
 
     print("Quiere agregar otra Encuesta? (1 si, 0 no)")
@@ -22,14 +23,9 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
             print("Lista de preguntas y respuestas")
             print(b)
 
-            generarEncuestas a (b!!1)
+            generarEncuestas a b
 
         else print("Programa finalizado")
-
-
-
-
-
 
 --Funcion para agregar preguntas.
 --[["Encuesta1"],["Encuesta2"], ["etc"]]
@@ -42,29 +38,34 @@ agregarEncuestas listaVacia = do
 
 --Funcion para agregar preguntas
 --[["Pregunta1", "Pregunta2"]]
-agregarPreguntas :: [[String]] ->IO [[[String]]]
-agregarPreguntas listaVacia = do
-    retornoPreguntas <- agregarPreguntasAux listaVacia
-    return([retornoPreguntas])
+agregarPreguntas :: [[[String]]] ->IO [[[String]]]
+agregarPreguntas listaPreguntas = do
+    listaAConcatenar <- agregarPreguntasAux []
+    let listaNueva = listaPreguntas ++ [listaAConcatenar]
+    return (listaNueva)
+    
 
---Auxiliar de agregacion de preguntas.   
 agregarPreguntasAux :: [[String]] ->IO [[String]]
-agregarPreguntasAux listaP = do
+agregarPreguntasAux listaVacia = do
+
     print("Quiere agregar otra pregunta? (1 si, 0 no)")
     variableCondicionAux <- input
     let variableCondicion = read variableCondicionAux :: Int  
+
     if (variableCondicion /= 0)
         then do
             pregunta <- input
             let a = pregunta
-            let listaNueva = listaP ++ [[a]]
-
             let listaRespuestas = agregarRespuestas []
             x<-(listaRespuestas)
-            let listaNueva2 = listaNueva ++ x
+
+            let listaNueva = [[a]] ++ x
+
+            let listaNueva2 = listaVacia ++ listaNueva
 
             agregarPreguntasAux listaNueva2
-       else return(listaP)
+       else return(listaVacia)
+
 
 --Funcion para agregar respuestas
 --[ [ ["Respuesta1","Respuesta2"], ["Respuesta1","Respuesta2"] ] ]
@@ -110,39 +111,9 @@ responderEncuestas listaPR listaRetorno contador = do
        else return(listaRetorno)
 
 
-{-
-indicesOf :: Eq a => a -> [a] -> [Int]
-indicesOf a as = [i | (b, i) <- zip as [0..], b == a]
--}
-
-
-
-listaprueba = ["hola", "adios", "xd"]
-listaPreguntas = [ [ ["pregunta1"],["respuesta1x", "respuestaN"], ["pregunta2"],["respuesta1", "respuesta2", "respuestaN"] ] ]
-
 main :: IO()
 main = do
-    --respuestas <- responderEncuestas (listaPreguntas!!0) [] 1
-    --print(respuestas)
-    --print(listaPreguntas!!0)
-    --print(indicesOf "respuesta1x" ((listaPreguntas!!0)!!1))
-
-    --generarEncuestas [] []
-
-    a <- agregarEncuestas []
-    b <- agregarPreguntas []
-
-    c <- agregarEncuestas a
-    d <- agregarPreguntas b
-
-    
-    putStrLn $ ""
-    print("Lista de encuestas")
-    print(a)
-
-    putStrLn $ ""
-    print("Lista de preguntas y respuestas")
-    print(b)
+    generarEncuestas [] []
 
 
 
