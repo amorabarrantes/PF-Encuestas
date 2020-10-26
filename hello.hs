@@ -57,6 +57,7 @@ generarResponder listaPreguntasGR listaRetornoGR = do
 --[["Encuesta1"],["Encuesta2"], ["etc"]]
 agregarEncuestas :: [[String]] ->IO [[String]]
 agregarEncuestas listaVacia = do
+    print("Digite el nombre de la encuesta por crear")
     pregunta <- input
     let lista = listaVacia ++ [[pregunta]]
 
@@ -80,16 +81,28 @@ agregarPreguntasAux listaVacia = do
 
     if (variableCondicion /= 0)
         then do
-            pregunta <- input
-            let a = pregunta
-            let listaRespuestas = agregarRespuestas []
-            x<-(listaRespuestas)
-
-            let listaNueva = [[a]] ++ x
-
-            let listaNueva2 = listaVacia ++ listaNueva
-
-            agregarPreguntasAux listaNueva2
+            print("Que tipo de respuesta quiere que tenga la pregunta? (1 Escalar, 0 SeleccionUnica)")
+            variableCondicionAux2 <- input
+            let variableCondicion2 = read variableCondicionAux2 :: Int  
+            if(variableCondicion2 == 0)
+                then do
+                    print("Digite el nombre de la pregunta")
+                    pregunta <- input
+                    let a = pregunta
+                    let listaRespuestas = agregarRespuestas []
+                    x<-(listaRespuestas)
+                    let listaNueva = [[a]] ++ x
+                    let listaNueva2 = listaVacia ++ listaNueva
+                    agregarPreguntasAux listaNueva2
+                else do
+                    print("Digite el nombre de la pregunta")
+                    pregunta <- input
+                    let a = pregunta
+                    let listaRespuestas = agregarRespuestasEscalar [] 0
+                    x<-(listaRespuestas)
+                    let listaNueva = [[a]] ++ x
+                    let listaNueva2 = listaVacia ++ listaNueva
+                    agregarPreguntasAux listaNueva2
        else return(listaVacia)
 
 
@@ -108,6 +121,18 @@ agregarRespuestas listaVacia = do
             let a = pregunta
             let listaNueva = listaVacia ++ [a]
             agregarRespuestas listaNueva
+    else return([listaVacia])
+
+agregarRespuestasEscalar :: [String] -> Int -> IO [[String]]
+agregarRespuestasEscalar listaVacia intRE = do
+    if (intRE < 5)
+    then do
+            print("Digite el nombre para el indice")
+            print(intRE+1)
+            pregunta <- input
+            let a = pregunta
+            let listaNueva = listaVacia ++ [a]
+            agregarRespuestasEscalar listaNueva (intRE+1)
     else return([listaVacia])
 
 --Responde a encuestas, mandar Lista De Preguntas y respuestas de la encuesta -> Lista de retorno, vacia por defecto -> Contador 0 por defecto
@@ -142,6 +167,11 @@ responderEncuestasAux listaPR listaRetorno contador = do
     else return(listaRetorno)
 
 
+--[[["pregunta1"],["r1","r2","r3","r4","r5","r6"],["preguntaEscalar"],["poco","regular","mucho","muchisimo","un vergazo"]]]
+
+
 main :: IO()
 main = do
     generarEncuestas [] []
+    --a <- agregarRespuestasEscalar [] 0
+    --print(a)
