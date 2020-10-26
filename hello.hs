@@ -3,18 +3,20 @@ input ::  IO String
 input  = do
     getLine
 
+--Genera encuestas, defecto parametros [] []
 
 generarEncuestas :: [[String]] -> [[[String]]] -> IO()
 generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
+    
+    a <- agregarEncuestas listaEncuestas
+    b <- agregarPreguntas listaPreguntasyRespuestas
 
     print("Quiere agregar otra Encuesta? (1 si, 0 no)")
     variableCondicionAux <- input
-    let variableCondicion = read variableCondicionAux :: Int  
+    let variableCondicion = read variableCondicionAux :: Int
 
     if (variableCondicion /= 0)
         then do
-            a <- agregarEncuestas listaEncuestas
-            b <- agregarPreguntas listaPreguntasyRespuestas
             putStrLn $ ""
             print("Lista de encuestas")
             print(a)
@@ -26,6 +28,10 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
             generarEncuestas a b
 
         else print("Programa finalizado")
+    
+    c <- (responderEncuestas (b !! 0) [] 1)
+    print(c)
+
 
 --Funcion para agregar preguntas.
 --[["Encuesta1"],["Encuesta2"], ["etc"]]
@@ -84,10 +90,7 @@ agregarRespuestas listaVacia = do
             agregarRespuestas listaNueva
     else return([listaVacia])
 
-
-
-
-
+--Responde a encuestas, mandar Lista De Preguntas y respuestas de la encuesta -> Lista de retorno, vacia por defecto -> Contador 0 por defecto
 responderEncuestas :: [[String]]->[[String]] -> Int ->IO [[String]]
 responderEncuestas listaPR listaRetorno contador = do
     
