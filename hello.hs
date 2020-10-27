@@ -52,13 +52,27 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
             print("Usted ingreso al menu para responder una encuesta, digite el indice de la que quiere responder")
             inputInt <- input
             let indiceEncuestaInt = read inputInt :: Int
-            listaConRespuestas <- generarResponder (mpListaPreguntas !! indiceEncuestaInt) []
-            putStrLn ("")
-            print("Lista con las respuestas")
-            print(listaConRespuestas)
-            putStrLn ("")
-            putStrLn ("")
-            menuPrincipal mpListaEncuestas mpListaPreguntas listaConRespuestas
+            print("Quiere que las respuestas sean automaticas o manuales (1 automatica, 0 manual)")
+            inputInt2 <- input
+            let indiceAM = read inputInt2 :: Int
+            if(indiceAM == 0)
+                then do
+                    listaConRespuestas <- generarResponder (mpListaPreguntas !! indiceEncuestaInt) []
+                    putStrLn ("")
+                    print("Lista con las respuestas")
+                    print(listaConRespuestas)
+                    putStrLn ("")
+                    putStrLn ("")
+                    menuPrincipal mpListaEncuestas mpListaPreguntas listaConRespuestas
+                else do
+                    listaConRespuestas2 <- responderAutomatico (mpListaPreguntas !! indiceEncuestaInt) [] 1
+                    putStrLn ("")
+                    print("Lista con las respuestas")
+                    print(listaConRespuestas2)
+                    putStrLn ("")
+                    putStrLn ("")
+                    menuPrincipal mpListaEncuestas mpListaPreguntas listaConRespuestas2
+
     else if (menuOpccion == 4)
         then do
             putStrLn $ ""
@@ -89,6 +103,17 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
         putStrLn $ ""
         menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
 
+
+responderAutomatico :: [[String]] -> [[[String]]] -> Int -> IO [[[String]]]
+responderAutomatico raListaPreguntas ralistaRetorno raContador = do
+    if (raContador < 11)
+    then do
+        let listaNueva = responderEncuestasAutomatico raListaPreguntas ralistaRetorno 1
+        a <- (listaNueva)
+        responderAutomatico raListaPreguntas a (raContador+1)
+    else do  
+        return(ralistaRetorno)
+    
 
 --Genera encuestas, defecto parametros [] []
 generarEncuestas :: [[String]] -> [[[String]]] -> IO[[[[String]]]]
@@ -256,6 +281,29 @@ responderEncuestasAux listaPR listaRetorno contador = do
                     responderEncuestasAux (tail listaPR) listaRetornoAux (contador)
     else return(listaRetorno)
 
+
+responderEncuestasAutomatico :: [[String]]->[[[String]]] -> Int ->IO [[[String]]]
+responderEncuestasAutomatico listaPR listaRetorno contador = do
+    listaAContatenar <- responderEncuestasAutomaticoAux listaPR [] contador
+    let listaNueva = listaRetorno ++ [listaAContatenar] 
+    
+    return (listaNueva)
+    
+
+responderEncuestasAutomaticoAux :: [[String]]->[[String]] -> Int ->IO [[String]]
+responderEncuestasAutomaticoAux listaPR listaRetorno contador = do
+    if (listaPR /= [])
+        then do
+            if (length(head listaPR) /= 1)
+                then do
+                    let listaResultados = head listaPR !! 0
+                    let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
+                    responderEncuestasAutomaticoAux (tail listaPR) listaRetornoAux (contador+1)
+                else do
+                    let listaResultados = head listaPR !! 0
+                    let listaRetornoAux = (listaRetorno ++ [[listaResultados]])
+                    responderEncuestasAutomaticoAux (tail listaPR) listaRetornoAux (contador)
+    else return(listaRetorno)
 
 main :: IO()
 main = do
