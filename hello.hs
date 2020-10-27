@@ -88,10 +88,6 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
         menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
 
 
-
-
-
-
 --Genera encuestas, defecto parametros [] []
 generarEncuestas :: [[String]] -> [[[String]]] -> IO[[[[String]]]]
 generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
@@ -130,7 +126,6 @@ generarStat2 respuestas2 = do
     let a = length(respuestas2 !!0)
     let b = div a 2
     return(b)
-
 
 
 generarResponder:: [[String]] -> [[[String]]] -> IO [[[String]]]
@@ -263,4 +258,3 @@ responderEncuestasAux listaPR listaRetorno contador = do
 main :: IO()
 main = do
     menuPrincipal [] [] []
-
