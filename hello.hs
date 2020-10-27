@@ -78,6 +78,8 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
             stat2 <- generarStat2 mpListaRespuestas 
             print("Cuantas preguntas tiene la encuesta contestada")
             print(stat2)
+            putStrLn $ ""
+            putStrLn $ ""
             menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
 
     else do
@@ -194,7 +196,6 @@ agregarPreguntasAux listaVacia = do
                     agregarPreguntasAux listaNueva2
        else return(listaVacia)
 
-
 --Funcion para agregar respuestas
 --[ [ ["Respuesta1","Respuesta2"], ["Respuesta1","Respuesta2"] ] ]
 --Dentro de los morados estan las respuestas para cada cuestionario.
@@ -255,6 +256,8 @@ responderEncuestasAux listaPR listaRetorno contador = do
                     responderEncuestasAux (tail listaPR) listaRetornoAux (contador)
     else return(listaRetorno)
 
+
 main :: IO()
 main = do
-    menuPrincipal [] [] []
+    menuPrincipal [["EncuestaPrueba"]] [[["Pregunta1"],["R1","R2","R3"], ["Pregunta2"], ["R22", "r23","r24"]]] []
+    
