@@ -3,9 +3,97 @@ input ::  IO String
 input  = do
     getLine
 
---Genera encuestas, defecto parametros [] []
+menuPrincipal :: [[String]] -> [[[String]]] -> [[[String]]]-> IO()
+menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
+    print("Bienvenido al menu principal de la aplicacion")
+    print("0-Para imprimir encuestas completas")
+    print("1-Para crear encuestas")
+    print("2-Para guardar encuestas en archivos txt")
+    print("3-Para responder encuestas")
+    print("4-Para mostrar variables de interes")
+    variableOpccionMenu <- input
+    let menuOpccion = read variableOpccionMenu :: Int
+    if      (menuOpccion == 0)
+        then do
+            putStrLn ("")
+            putStrLn ("")
+            print("Lista de encuestas")
+            print (mpListaEncuestas)
+            print("Lista de preguntas y respuestas")
+            print(mpListaPreguntas)
+            putStrLn ("")
+            menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
+    else if (menuOpccion == 1)
+        then do
+            mpTotalGenerado <- generarEncuestas mpListaEncuestas mpListaPreguntas
+            putStrLn ("")
+            putStrLn ("")
+            print("Lista de encuestas")
+            print ((mpTotalGenerado!!0)!!0)
+            print("Lista de preguntas y respuestas")
+            print(mpTotalGenerado!!1)
+            putStrLn ("")
+            menuPrincipal ((mpTotalGenerado !! 0)!!0) (mpTotalGenerado!!1) mpListaRespuestas
+    else if (menuOpccion == 2)
+        then do
+            putStrLn ("")
+            print("Guardando los datos en archivos txt...")
+            mapM_ (appendFile "encuestas.txt" . show) [mpListaEncuestas] --Guardamos en un txt los nombrees de encuestas.
+            (appendFile "encuestas.txt" "\n")
+            mapM_ (appendFile "preguntas.txt" . show) [mpListaPreguntas] --Guardamos en un txt las preguntas.
+            (appendFile "preguntas.txt" "\n") 
+            print("Guardado correctamente...")
+            putStrLn ("")
+            menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
+    else if (menuOpccion == 3)
+        then do
+            putStrLn ("")
+            print(mpListaEncuestas)
+            print("Usted ingreso al menu para responder una encuesta, digite el indice de la que quiere responder")
+            inputInt <- input
+            let indiceEncuestaInt = read inputInt :: Int
+            listaConRespuestas <- generarResponder (mpListaPreguntas !! indiceEncuestaInt) []
+            putStrLn ("")
+            print("Lista con las respuestas")
+            print(listaConRespuestas)
+            putStrLn ("")
+            putStrLn ("")
+            menuPrincipal mpListaEncuestas mpListaPreguntas listaConRespuestas
+    else if (menuOpccion == 4)
+        then do
+            putStrLn $ ""
+            print("Estadisticas")
 
-generarEncuestas :: [[String]] -> [[[String]]] -> IO()
+            putStrLn $ ""
+            stat0 <- generarStat0 mpListaEncuestas
+            print("Cuantas encuestas se introdujeron al sistema")
+            print(stat0)
+
+            putStrLn $ ""
+            stat1 <- generarStat1 mpListaRespuestas 
+            print("Cuantas respuestas tuvo la encuesta")
+            print(stat1)
+            
+            putStrLn $ ""
+            stat2 <- generarStat2 mpListaRespuestas 
+            print("Cuantas preguntas tiene la encuesta contestada")
+            print(stat2)
+            menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
+
+    else do
+        putStrLn $ ""
+        print("Opccion no valida en el menu")
+        putStrLn $ ""
+        putStrLn $ ""
+        menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
+
+
+
+
+
+
+--Genera encuestas, defecto parametros [] []
+generarEncuestas :: [[String]] -> [[[String]]] -> IO[[[[String]]]]
 generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
     
     listaFinalEncuestas <- agregarEncuestas listaEncuestas
@@ -18,48 +106,10 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
     if (variableCondicion /= 0)
         then do
             generarEncuestas listaFinalEncuestas listaFinalPreguntas
-        else print("Programa finalizado")
-
-    putStrLn $ ""
-    print("Lista de encuestas")
-    print(listaFinalEncuestas)
-    mapM_ (appendFile "encuestas.txt" . show) listaFinalEncuestas
-    (appendFile "encuestas.txt" "\n")
-
-    putStrLn $ ""
-    print("Lista de preguntas y respuestas")
-    print(listaFinalPreguntas)
-    mapM_ (appendFile "preguntas.txt" . show) listaFinalPreguntas
-    (appendFile "preguntas.txt" "\n")
-    
-    putStrLn $ ""
-    print(listaFinalEncuestas)
-    print("¿Digite el indice de la encuesta a responder?")
-    indiceEncuesta <- input
-    let indiceEncuestaInt = read indiceEncuesta :: Int
-
-    listaConRespuestas <- generarResponder (listaFinalPreguntas !! indiceEncuestaInt) []
-    putStrLn $ ""
-    print("Lista con las respuestas")
-    print(listaConRespuestas)
-
-    putStrLn $ ""
-    print("Estadisticas")
-
-    putStrLn $ ""
-    stat0 <- generarStat0 listaFinalEncuestas
-    print("Cuantas encuestas se introdujeron al sistema")
-    print(stat0)
-
-    putStrLn $ ""
-    stat1 <- generarStat1 listaConRespuestas
-    print("Cuantas respuestas tuvo la encuesta")
-    print(stat1)
-    
-    putStrLn $ ""
-    stat2 <- generarStat2 listaConRespuestas
-    print("Cuantas preguntas tiene la encuesta contestada")
-    print(stat2)
+        else do
+            let listaRetornoSumadas = [[listaFinalEncuestas]] ++ [listaFinalPreguntas]
+            print("Se termino de agregar encuestas")
+            return (listaRetornoSumadas)
 
 --Cuantas encuestas se introdujeron al sistema
 generarStat0:: [[String]] -> IO Int
@@ -210,12 +260,7 @@ responderEncuestasAux listaPR listaRetorno contador = do
                     responderEncuestasAux (tail listaPR) listaRetornoAux (contador)
     else return(listaRetorno)
 
-
---[[["pregunta1"],["r1","r2","r3","r4","r5","r6"],["preguntaEscalar"],["poco","regular","mucho","muchisimo","un vergazo"]]]
-
-
 main :: IO()
 main = do
-    generarEncuestas [] []
-    --a <- agregarRespuestasEscalar [] 0
-    --print(a)
+    menuPrincipal [] [] []
+

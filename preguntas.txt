@@ -1,2 +1,1 @@
-[["p1"],["r1","r2"]][["preguntaEscalar"],["p","q","w","e","r"]]
-[["p1"],["r1","r2"]]
+[[["Pregunta1"],["r1","r2","r3","r4"],["pregunta2"],["r1","r2","r3"],["Escalar"],["muy poco","poco","regular","mucho","muchisimo"]]]
