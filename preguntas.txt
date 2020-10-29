@@ -1,1 +1,1 @@
-[[["escalar"],["q","w","e","r","t"],["pregunta1"],["r1","r2"]]]
+[[["Es el covid tan malo como parece?"],["Si","No","Quiza","Puede ser"],["El covid ha matado a mucha gente?"],["Si","no","bastante"],["Que tanto ha afectado el covid"],["muy poco","poco","regular","bastante","muchisimo"]],[["El asma mata?"],["si","no","quiza"],["que tanto peligro representa el asma"],["poco","muy poco","regular","mucho","muchisimo"]]]

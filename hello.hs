@@ -1,7 +1,24 @@
+{-
+
+En esta seccion se encuentra una funcion que su utilidad es para pedir
+datos a un usuario que este utilizando la aplicacion.
+
+-}
+
 --Funcion para pedir inputs al usuario.
 input ::  IO String
 input  = do
     getLine
+
+{-
+
+En esta seccion tenemos el menu principal con el que se cuenta,
+posee varias opciones como imprimir las encuestas completas,
+crear encuestas, guardarencuestas en archivos txt,
+y responder encuestas, ademas de mostrar las variables
+de interes en base a esas respuestas.
+
+-}
 
 menuPrincipal :: [[String]] -> [[[String]]] -> [[[String]]]-> IO()
 menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
@@ -72,22 +89,18 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
                     putStrLn ("")
                     putStrLn ("")
                     menuPrincipal mpListaEncuestas mpListaPreguntas listaConRespuestas2
-
     else if (menuOpccion == 4)
         then do
             putStrLn $ ""
             print("Estadisticas")
-
             putStrLn $ ""
             stat0 <- generarStat0 mpListaEncuestas
             print("Cuantas encuestas se introdujeron al sistema")
             print(stat0)
-
             putStrLn $ ""
             stat1 <- generarStat1 mpListaRespuestas 
             print("Cuantas respuestas tuvo la encuesta")
             print(stat1)
-            
             putStrLn $ ""
             stat2 <- generarStat2 mpListaRespuestas 
             print("Cuantas preguntas tiene la encuesta contestada")
@@ -95,7 +108,6 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
             putStrLn $ ""
             putStrLn $ ""
             menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
-
     else do
         putStrLn $ ""
         print("Opccion no valida en el menu")
@@ -103,29 +115,22 @@ menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas = do
         putStrLn $ ""
         menuPrincipal mpListaEncuestas mpListaPreguntas mpListaRespuestas
 
+{-
 
-responderAutomatico :: [[String]] -> [[[String]]] -> Int -> IO [[[String]]]
-responderAutomatico raListaPreguntas ralistaRetorno raContador = do
-    if (raContador < 11)
-    then do
-        let listaNueva = responderEncuestasAutomatico raListaPreguntas ralistaRetorno 1
-        a <- (listaNueva)
-        responderAutomatico raListaPreguntas a (raContador+1)
-    else do  
-        return(ralistaRetorno)
+En esta seccion tenemos una funcion que genera la encuesta completa
+cuando en el menu se selecciona el numero 1
+
+-}
+
     
-
 --Genera encuestas, defecto parametros [] []
 generarEncuestas :: [[String]] -> [[[String]]] -> IO[[[[String]]]]
 generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
-    
     listaFinalEncuestas <- agregarEncuestas listaEncuestas
     listaFinalPreguntas <- agregarPreguntas listaPreguntasyRespuestas
-
     print("Quiere agregar otra Encuesta? (1 si, 0 no)")
     variableCondicionAux <- input
     let variableCondicion = read variableCondicionAux :: Int
-
     if (variableCondicion /= 0)
         then do
             generarEncuestas listaFinalEncuestas listaFinalPreguntas
@@ -134,67 +139,43 @@ generarEncuestas listaEncuestas listaPreguntasyRespuestas = do
             print("Se termino de agregar encuestas")
             return (listaRetornoSumadas)
 
---Cuantas encuestas se introdujeron al sistema
-generarStat0:: [[String]] -> IO Int
-generarStat0 respuestas0 = do
-    let a = length(respuestas0)
-    return(a)
 
+{-
 
---Cuantas veces se respondio la encuesta
-generarStat1:: [[[String]]] -> IO Int
-generarStat1 respuestas1 = do
-    let a = length(respuestas1)
-    return(a)
+En esta seccion se genera la lista con los nombres de
+las encuestas, estas iran asociadas a las preguntas y opciones
+mediante su index, lo que quiere decir que si el nombre de la encuesta es
+"Encuesta1" y tiene el indice 0, pues las preguntas y opciones estaran en el indice 0
+de su respectiva lista.
 
---Cuantas preguntas tiene una encuesta
-generarStat2:: [[[String]]] -> IO Int
-generarStat2 respuestas2 = do
-    let a = length(respuestas2 !!0)
-    let b = div a 2
-    return(b)
+-}
 
-
-generarResponder:: [[String]] -> [[[String]]] -> IO [[[String]]]
-generarResponder listaPreguntasGR listaRetornoGR = do
-    print("Quiere dar otra respuesta a la encuesta? (1 si, 0 no)")
-    variableCondicionAux <- input
-    let variableCondicion = read variableCondicionAux :: Int
-
-    if (variableCondicion /= 0)
-        then do
-            respuestasGR <- responderEncuestas listaPreguntasGR listaRetornoGR 1
-            generarResponder listaPreguntasGR respuestasGR
-
-        else return (listaRetornoGR)
-
-
---Funcion para agregar preguntas.
---[["Encuesta1"],["Encuesta2"], ["etc"]]
 agregarEncuestas :: [[String]] ->IO [[String]]
 agregarEncuestas listaVacia = do
     print("Digite el nombre de la encuesta por crear")
     pregunta <- input
     let lista = listaVacia ++ [[pregunta]]
-
     return(lista)
 
---Funcion para agregar preguntas
---[["Pregunta1", "Pregunta2"]]
+
+{-
+
+En esta seccion estan las funciones para agregar preguntas a las encuestas 
+que se creen en la funcion de agregar encuestas.
+
+-}
+
 agregarPreguntas :: [[[String]]] ->IO [[[String]]]
 agregarPreguntas listaPreguntas = do
     listaAConcatenar <- agregarPreguntasAux []
     let listaNueva = listaPreguntas ++ [listaAConcatenar]
     return (listaNueva)
-    
 
 agregarPreguntasAux :: [[String]] ->IO [[String]]
 agregarPreguntasAux listaVacia = do
-
     print("Quiere agregar otra pregunta? (1 si, 0 no)")
     variableCondicionAux <- input
     let variableCondicion = read variableCondicionAux :: Int  
-
     if (variableCondicion /= 0)
         then do
             print("Que tipo de respuesta quiere que tenga la pregunta? (1 Escalar, 0 SeleccionUnica)")
@@ -229,7 +210,6 @@ agregarRespuestas listaVacia = do
     print("Quiere agregar otra respuesta para la pregunta? (1 si, 0 no)")
     variableCondicionAux <- input
     let variableCondicion = read variableCondicionAux :: Int  
-
     if (variableCondicion /= 0)
     then do
             pregunta <- input
@@ -238,27 +218,31 @@ agregarRespuestas listaVacia = do
             agregarRespuestas listaNueva
     else return([listaVacia])
 
-agregarRespuestasEscalar :: [String] -> Int -> IO [[String]]
-agregarRespuestasEscalar listaVacia intRE = do
-    if (intRE < 5)
-    then do
-            print("Digite el nombre para el indice")
-            print(intRE+1)
-            pregunta <- input
-            let a = pregunta
-            let listaNueva = listaVacia ++ [a]
-            agregarRespuestasEscalar listaNueva (intRE+1)
-    else return([listaVacia])
 
---Responde a encuestas, mandar Lista De Preguntas y respuestas de la encuesta -> Lista de retorno, vacia por defecto -> Contador 0 por defecto
+{-
+
+En esta seccion se generan funciones que permiten dar respuestas a encuestas 
+previamente creadas por el usuario.
+
+-}
+
+generarResponder:: [[String]] -> [[[String]]] -> IO [[[String]]]
+generarResponder listaPreguntasGR listaRetornoGR = do
+    print("Quiere dar otra respuesta a la encuesta? (1 si, 0 no)")
+    variableCondicionAux <- input
+    let variableCondicion = read variableCondicionAux :: Int
+    if (variableCondicion /= 0)
+        then do
+            respuestasGR <- responderEncuestas listaPreguntasGR listaRetornoGR 1
+            generarResponder listaPreguntasGR respuestasGR
+        else return (listaRetornoGR)
+
 responderEncuestas :: [[String]]->[[[String]]] -> Int ->IO [[[String]]]
 responderEncuestas listaPR listaRetorno contador = do
     listaAContatenar <- responderEncuestasAux listaPR [] contador
     let listaNueva = listaRetorno ++ [listaAContatenar] 
-    
     return (listaNueva)
     
-
 responderEncuestasAux :: [[String]]->[[String]] -> Int ->IO [[String]]
 responderEncuestasAux listaPR listaRetorno contador = do
     if (listaPR /= [])
@@ -281,6 +265,36 @@ responderEncuestasAux listaPR listaRetorno contador = do
                     responderEncuestasAux (tail listaPR) listaRetornoAux (contador)
     else return(listaRetorno)
 
+agregarRespuestasEscalar :: [String] -> Int -> IO [[String]]
+agregarRespuestasEscalar listaVacia intRE = do
+    if (intRE < 5)
+    then do
+            print("Digite el nombre para el indice")
+            print(intRE+1)
+            pregunta <- input
+            let a = pregunta
+            let listaNueva = listaVacia ++ [a]
+            agregarRespuestasEscalar listaNueva (intRE+1)
+    else return([listaVacia])
+
+{-
+
+En esta seccion, se realiza la respuesta de encuestas 
+de manera automatica, 
+ejecutandose esta para generar al menos 10 respuestas
+sin tener que introducir ningun dato.
+
+-}
+
+responderAutomatico :: [[String]] -> [[[String]]] -> Int -> IO [[[String]]]
+responderAutomatico raListaPreguntas ralistaRetorno raContador = do
+    if (raContador < 11)
+    then do
+        let listaNueva = responderEncuestasAutomatico raListaPreguntas ralistaRetorno 1
+        a <- (listaNueva)
+        responderAutomatico raListaPreguntas a (raContador+1)
+    else do  
+        return(ralistaRetorno)
 
 responderEncuestasAutomatico :: [[String]]->[[[String]]] -> Int ->IO [[[String]]]
 responderEncuestasAutomatico listaPR listaRetorno contador = do
@@ -305,7 +319,43 @@ responderEncuestasAutomaticoAux listaPR listaRetorno contador = do
                     responderEncuestasAutomaticoAux (tail listaPR) listaRetornoAux (contador)
     else return(listaRetorno)
 
+
+{-
+
+ESTADISTICAS DEL PROYECTO.
+ Se realizan en base a las encuestas contestasdas.
+
+-}
+
+--Cuantas encuestas se introdujeron al sistema
+generarStat0:: [[String]] -> IO Int
+generarStat0 respuestas0 = do
+    let a = length(respuestas0)
+    return(a)
+
+
+--Cuantas veces se respondio la encuesta
+generarStat1:: [[[String]]] -> IO Int
+generarStat1 respuestas1 = do
+    let a = length(respuestas1)
+    return(a)
+
+--Cuantas preguntas tiene una encuesta
+generarStat2:: [[[String]]] -> IO Int
+generarStat2 respuestas2 = do
+    let a = length(respuestas2 !!0)
+    let b = div a 2
+    return(b)
+
+
+{-
+
+Main del proyecto, la unica funcion a la que llama es a la del menu.
+Por defecto, tenemos una encuesta cargada para en el caso en el que se quiera
+hacer una demostracion rapida con el uso de la parte de responder automaticamente.
+
+-}
+
 main :: IO()
 main = do
-    menuPrincipal [["EncuestaPrueba"]] [[["Pregunta1"],["R1","R2","R3"], ["Pregunta2"], ["R22", "r23","r24"]]] []
-    
+    menuPrincipal [["Encuesta Covid"]] [[["Es el covid tan malo como parece?"],["Si","No","Quiza", "Puede ser"], ["El covid ha matado a mucha gente?"], ["Si", "no","bastante"],["Que tanto ha afectado el covid"],["muy poco","poco","regular","bastante","muchisimo"]]] []
